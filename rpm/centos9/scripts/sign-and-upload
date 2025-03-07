@@ -4,7 +4,7 @@ set -e -x
 dnf install -y epel-release wget
 
 dnf install -y python3 python3-pip python3-devel \
-      rpm-sign expect git
+  rpm-sign expect git
 
 dnf install -y ca-certificates createrepo_c pinentry pinentry-curses
 
@@ -48,6 +48,7 @@ TARGET_RPM_PATH="dist/centos9/$RPMARCH/rke2-*.rpm"
 if [[ "$UPLOAD_ARCH" == "srcrpm" ]]; then
   TARGET_S3_PATH="rke2/$RPM_CHANNEL/$RPM_MAJMIN/centos/9/source"
   TARGET_RPM_PATH="dist/centos9/source/rke2-*.src.rpm"
+fi
 
 case "$RPM_CHANNEL" in
 "testing")
@@ -107,5 +108,4 @@ wget https://raw.githubusercontent.com/vitorsavian/ecm-distro-tools/master/bin/r
 chmod +x rpm_tooling
 mv ./rpm_tooling /usr/bin
 
-rpm_tooling --bucket $AWS_S3_BUCKET/$TARGET_S3_PATH --region us-east-1 --sign --sign-pass $PRIVATE_KEY_PASS_PHRASE --aws-access-key $AWS_ACCESS_KEY_ID --aws-secret-key $AWS_ACCESS_KEY_ID $TARGET_RPM_PATH
-
+rpm_tooling --bucket $AWS_S3_BUCKET/$TARGET_S3_PATH --region us-east-1 --sign --sign-pass $PRIVATE_KEY_PASS_PHRASE --aws-access-key $AWS_ACCESS_KEY_ID --aws-secret-key $AWS_SECRET_ACCESS_KEY $TARGET_RPM_PATH
