@@ -8,9 +8,9 @@ permissions:
     id-token: write
 jobs:
   publish:
+    environment: test
     runs-on: ubuntu-latest
     strategy:
-      environment: test
       fail-fast: false
       matrix:
         os:
