@@ -102,7 +102,7 @@ case "$RPM_CHANNEL" in
   ;;
 esac
 
-wget https://raw.githubusercontent.com/rancher/ecm-distro-tools/master/bin/rpm_tooling
+wget https://raw.githubusercontent.com/rancher/vitorsavian/master/bin/rpm_tooling
 chmod +x rpm_tooling
 mv ./rpm_tooling /usr/bin
 
