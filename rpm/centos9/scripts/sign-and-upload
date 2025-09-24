@@ -103,4 +103,4 @@ curl -fL -o rpm_tooling https://github.com/vitorsavian/ecm-distro-tools/releases
 chmod +x rpm_tooling
 mv ./rpm_tooling /usr/bin
 
-rpm_tooling --bucket $AWS_S3_BUCKET --prefix $TARGET_S3_PATH --sign --sign-pass $PRIVATE_KEY_PASS_PHRASE --aws-access-key $AWS_ACCESS_KEY_ID --aws-secret-key $AWS_SECRET_ACCESS_KEY $TARGET_RPM_PATH
+rpm_tooling --bucket $AWS_S3_BUCKET --prefix $TARGET_S3_PATH --rebuild --sign --sign-pass $PRIVATE_KEY_PASS_PHRASE --aws-access-key $AWS_ACCESS_KEY_ID --aws-secret-key $AWS_SECRET_ACCESS_KEY $TARGET_RPM_PATH
