@@ -99,7 +99,7 @@ case "$RPM_CHANNEL" in
   ;;
 esac
 
-curl -L -o rpm_tooling https://raw.githubusercontent.com/vitorsavian/ecm-distro-tools/v1.0.0/rpm-linux-amd64
+curl -fL -o rpm_tooling https://github.com/vitorsavian/ecm-distro-tools/releases/latest/download/rpm-linux-amd64
 chmod +x rpm_tooling
 mv ./rpm_tooling /usr/bin
 
