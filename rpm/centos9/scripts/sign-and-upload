@@ -3,7 +3,7 @@ set -e -x
 
 dnf install -y epel-release wget
 
-dnf install -y expect git
+dnf install -y expect git rpm-sign
 
 dnf install -y ca-certificates createrepo_c pinentry pinentry-curses
 
