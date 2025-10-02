@@ -11,10 +11,14 @@ pushd $(dirname $0)/..
 . ./scripts/version
 popd
 
+mkdir -p /run/secrets
+echo "$PRIVATE_KEY_PASS_PHRASE" > /run/secrets/gpg_passphrase
+
 cat <<\EOF >~/.rpmmacros
 %_signature gpg
 %_gpg_name ci@rancher.com
-%__gpg_sign_cmd %{__gpg} gpg --pinentry-mode loopback --passphrase-fd 0 --force-v3-sigs --verbose --no-armor -u "%{_gpg_name}" -sbo %{__signature_filename} --digest-algo sha256 %{__plaintext_filename}
+%_gpg_passphrase_file /run/secrets/gpg_passphrase
+%__gpg_sign_cmd %{__gpg} --batch --yes --pinentry-mode loopback --passphrase-file "%{_gpg_passphrase_file}"  --force-v3-sigs --verbose --no-armor -u "%{_gpg_name}" -sbo %{__signature_filename} --digest-algo sha256 %{__plaintext_filename}
 %_source_filedigest_algorithm 8
 %_binary_filedigest_algorithm 8
 EOF
@@ -103,4 +107,4 @@ curl -fL -o rpm_tooling https://github.com/vitorsavian/ecm-distro-tools/releases
 chmod +x rpm_tooling
 mv ./rpm_tooling /usr/bin
 
-rpm_tooling --bucket $AWS_S3_BUCKET --prefix $TARGET_S3_PATH --sign --sign-key $PWD/key.gpg --sign-pass $PRIVATE_KEY_PASS_PHRASE --aws-access-key $AWS_ACCESS_KEY_ID --aws-secret-key $AWS_SECRET_ACCESS_KEY $TARGET_RPM_PATH
+rpm_tooling --bucket $AWS_S3_BUCKET --prefix $TARGET_S3_PATH --sign --aws-access-key $AWS_ACCESS_KEY_ID --aws-secret-key $AWS_SECRET_ACCESS_KEY $TARGET_RPM_PATH
