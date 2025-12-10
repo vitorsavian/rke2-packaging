@@ -8,52 +8,53 @@ permissions:
     id-token: write
 jobs:
   publish:
+    environment: test
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         os:
-          - "centos8"
-          - "centos9"
+          #- "centos8"
+          #- "centos9"
           - "centos10"
-          - "microos"
-          - "slemicro"
+          #- "microos"
+          #- "slemicro"
         arch:
           - "amd64"
-          - "srcrpm"
-          - "arm64"
+          #- "srcrpm"
+          #- "arm64"
         include:
-          - arch: "srcrpm"
-            upload-script: "sign-and-upload"
-            build: "x86_64-amd64"
+          #- arch: "srcrpm"
+          #  upload-script: "sign-and-upload"
+          #  build: "x86_64-amd64"
           - arch: "amd64"
             upload-script: "sign-and-upload"
             build: "x86_64-amd64"
-          - arch: "arm64"
-            upload-script: "sign-and-upload"
-            build: "aarch64-arm64"
+          #- arch: "arm64"
+          #  upload-script: "sign-and-upload"
+          #  build: "aarch64-arm64"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: "Read secrets"
-        uses: rancher-eio/read-vault-secrets@main
-        env:
-          GH_TOKEN: ${{ github.token }}
-        with:
-          secrets: |
-            secret/data/github/repo/${{ github.repository }}/private-key/credentials privateKey | PRIVATE_KEY ;
-            secret/data/github/repo/${{ github.repository }}/private-key-pass-phrase/credentials token | PRIVATE_KEY_PASS_PHRASE ;
-            secret/data/github/repo/${{ github.repository }}/testing-private-key/credentials privateKey | TESTING_PRIVATE_KEY ;
-            secret/data/github/repo/${{ github.repository }}/testing-private-key-pass-phrase/credentials token | TESTING_PRIVATE_KEY_PASS_PHRASE ;
-            secret/data/github/repo/${{ github.repository }}/aws-s3-bucket/credentials token | AWS_S3_BUCKET ;
-            secret/data/github/repo/${{ github.repository }}/aws-access-key-id/credentials token | AWS_ACCESS_KEY_ID ;
-            secret/data/github/repo/${{ github.repository }}/aws-secret-access-key/credentials token | AWS_SECRET_ACCESS_KEY ;
-            secret/data/github/repo/${{ github.repository }}/testing-aws-s3-bucket/credentials token | TESTING_AWS_S3_BUCKET ;
-            secret/data/github/repo/${{ github.repository }}/testing-aws-access-key-id/credentials token | TESTING_AWS_ACCESS_KEY_ID ;
-            secret/data/github/repo/${{ github.repository }}/testing-aws-secret-access-key/credentials token | TESTING_AWS_SECRET_ACCESS_KEY ;
+      # - name: "Read secrets"
+      #   uses: rancher-eio/read-vault-secrets@main
+      #   env:
+      #     GH_TOKEN: ${{ github.token }}
+      #   with:
+      #     secrets: |
+      #       secret/data/github/repo/${{ github.repository }}/private-key/credentials privateKey | PRIVATE_KEY ;
+      #       secret/data/github/repo/${{ github.repository }}/private-key-pass-phrase/credentials token | PRIVATE_KEY_PASS_PHRASE ;
+      #       secret/data/github/repo/${{ github.repository }}/testing-private-key/credentials privateKey | TESTING_PRIVATE_KEY ;
+      #       secret/data/github/repo/${{ github.repository }}/testing-private-key-pass-phrase/credentials token | TESTING_PRIVATE_KEY_PASS_PHRASE ;
+      #       secret/data/github/repo/${{ github.repository }}/aws-s3-bucket/credentials token | AWS_S3_BUCKET ;
+      #       secret/data/github/repo/${{ github.repository }}/aws-access-key-id/credentials token | AWS_ACCESS_KEY_ID ;
+      #       secret/data/github/repo/${{ github.repository }}/aws-secret-access-key/credentials token | AWS_SECRET_ACCESS_KEY ;
+      #       secret/data/github/repo/${{ github.repository }}/testing-aws-s3-bucket/credentials token | TESTING_AWS_S3_BUCKET ;
+      #       secret/data/github/repo/${{ github.repository }}/testing-aws-access-key-id/credentials token | TESTING_AWS_ACCESS_KEY_ID ;
+      #       secret/data/github/repo/${{ github.repository }}/testing-aws-secret-access-key/credentials token | TESTING_AWS_SECRET_ACCESS_KEY ;
       - name: Install Dapper
         run: |
           mkdir -p .local/bin
@@ -64,12 +65,12 @@ jobs:
         env:
           TAG: ${{ github.ref_name }}
           COMBARCH: ${{ matrix.build }}
-          AWS_S3_BUCKET: ${{ env.AWS_S3_BUCKET }}
-          AWS_ACCESS_KEY_ID: ${{ env.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          TESTING_AWS_S3_BUCKET: ${{ env.TESTING_AWS_S3_BUCKET }}
-          TESTING_AWS_ACCESS_KEY_ID: ${{ env.TESTING_AWS_ACCESS_KEY_ID }}
-          TESTING_AWS_SECRET_ACCESS_KEY: ${{ env.TESTING_AWS_SECRET_ACCESS_KEY }}
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          TESTING_AWS_S3_BUCKET: ${{ secrets.TESTING_AWS_S3_BUCKET }}
+          TESTING_AWS_ACCESS_KEY_ID: ${{ secrets.TESTING_AWS_ACCESS_KEY_ID }}
+          TESTING_AWS_SECRET_ACCESS_KEY: ${{ secrets.TESTING_AWS_SECRET_ACCESS_KEY }}
         run: |
           dapper -f Dockerfile.${{ matrix.os }}.dapper rpm/${{ matrix.os }}/scripts/build
       - name: Sign and upload to S3
@@ -77,16 +78,16 @@ jobs:
           TAG: ${{ github.ref_name }}
           COMBARCH: ${{ matrix.build }}
           UPLOAD_ARCH: ${{ matrix.arch }}
-          PRIVATE_KEY: ${{ env.PRIVATE_KEY }}
-          PRIVATE_KEY_PASS_PHRASE: ${{ env.PRIVATE_KEY_PASS_PHRASE }}
-          TESTING_PRIVATE_KEY: ${{ env.TESTING_PRIVATE_KEY }}
-          TESTING_PRIVATE_KEY_PASS_PHRASE: ${{ env.TESTING_PRIVATE_KEY_PASS_PHRASE }}
-          AWS_S3_BUCKET: ${{ env.AWS_S3_BUCKET }}
-          AWS_ACCESS_KEY_ID: ${{ env.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          TESTING_AWS_S3_BUCKET: ${{ env.TESTING_AWS_S3_BUCKET }}
-          TESTING_AWS_ACCESS_KEY_ID: ${{ env.TESTING_AWS_ACCESS_KEY_ID }}
-          TESTING_AWS_SECRET_ACCESS_KEY: ${{ env.TESTING_AWS_SECRET_ACCESS_KEY }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          PRIVATE_KEY_PASS_PHRASE: ${{ secrets.PRIVATE_KEY_PASS_PHRASE }}
+          TESTING_PRIVATE_KEY: ${{ secrets.TESTING_PRIVATE_KEY }}
+          TESTING_PRIVATE_KEY_PASS_PHRASE: ${{ secrets.TESTING_PRIVATE_KEY_PASS_PHRASE }}
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          TESTING_AWS_S3_BUCKET: ${{ secrets.TESTING_AWS_S3_BUCKET }}
+          TESTING_AWS_ACCESS_KEY_ID: ${{ secrets.TESTING_AWS_ACCESS_KEY_ID }}
+          TESTING_AWS_SECRET_ACCESS_KEY: ${{ secrets.TESTING_AWS_SECRET_ACCESS_KEY }}
         run: |
           docker run --rm \
             -v "$(pwd):/workspace" \
