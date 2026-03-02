@@ -8,6 +8,7 @@ permissions:
     id-token: write
 jobs:
   publish:
+    environment: test
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -41,22 +42,22 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: "Read secrets"
-        uses: rancher-eio/read-vault-secrets@main
-        env:
-          GH_TOKEN: ${{ github.token }}
-        with:
-          secrets: |
-            secret/data/github/repo/${{ github.repository }}/private-key/credentials privateKey | PRIVATE_KEY ;
-            secret/data/github/repo/${{ github.repository }}/private-key-pass-phrase/credentials token | PRIVATE_KEY_PASS_PHRASE ;
-            secret/data/github/repo/${{ github.repository }}/testing-private-key/credentials privateKey | TESTING_PRIVATE_KEY ;
-            secret/data/github/repo/${{ github.repository }}/testing-private-key-pass-phrase/credentials token | TESTING_PRIVATE_KEY_PASS_PHRASE ;
-            secret/data/github/repo/${{ github.repository }}/aws-s3-bucket/credentials token | AWS_S3_BUCKET ;
-            secret/data/github/repo/${{ github.repository }}/aws-access-key-id/credentials token | AWS_ACCESS_KEY_ID ;
-            secret/data/github/repo/${{ github.repository }}/aws-secret-access-key/credentials token | AWS_SECRET_ACCESS_KEY ;
-            secret/data/github/repo/${{ github.repository }}/testing-aws-s3-bucket/credentials token | TESTING_AWS_S3_BUCKET ;
-            secret/data/github/repo/${{ github.repository }}/testing-aws-access-key-id/credentials token | TESTING_AWS_ACCESS_KEY_ID ;
-            secret/data/github/repo/${{ github.repository }}/testing-aws-secret-access-key/credentials token | TESTING_AWS_SECRET_ACCESS_KEY ;
+      # - name: "Read secrets"
+      #   uses: rancher-eio/read-vault-secrets@main
+      #   env:
+      #     GH_TOKEN: ${{ github.token }}
+      #   with:
+      #     secrets: |
+      #       secret/data/github/repo/${{ github.repository }}/private-key/credentials privateKey | PRIVATE_KEY ;
+      #       secret/data/github/repo/${{ github.repository }}/private-key-pass-phrase/credentials token | PRIVATE_KEY_PASS_PHRASE ;
+      #       secret/data/github/repo/${{ github.repository }}/testing-private-key/credentials privateKey | TESTING_PRIVATE_KEY ;
+      #       secret/data/github/repo/${{ github.repository }}/testing-private-key-pass-phrase/credentials token | TESTING_PRIVATE_KEY_PASS_PHRASE ;
+      #       secret/data/github/repo/${{ github.repository }}/aws-s3-bucket/credentials token | AWS_S3_BUCKET ;
+      #       secret/data/github/repo/${{ github.repository }}/aws-access-key-id/credentials token | AWS_ACCESS_KEY_ID ;
+      #       secret/data/github/repo/${{ github.repository }}/aws-secret-access-key/credentials token | AWS_SECRET_ACCESS_KEY ;
+      #       secret/data/github/repo/${{ github.repository }}/testing-aws-s3-bucket/credentials token | TESTING_AWS_S3_BUCKET ;
+      #       secret/data/github/repo/${{ github.repository }}/testing-aws-access-key-id/credentials token | TESTING_AWS_ACCESS_KEY_ID ;
+      #       secret/data/github/repo/${{ github.repository }}/testing-aws-secret-access-key/credentials token | TESTING_AWS_SECRET_ACCESS_KEY ;
       
       - name: Build
         env:
