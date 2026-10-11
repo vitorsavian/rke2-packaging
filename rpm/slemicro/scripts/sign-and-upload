@@ -42,11 +42,15 @@ unset IFS
 
 # Desired TARGET_S3_PATH would be something like rke2/<channel>/centos/7/<arch>
 
+# slemicro is also published as sle, prime only lives under sle
+# TODO: stop publishing to the slemicro path once we reach 1.40, only keep sle
 TARGET_S3_PATH="rke2/$RPM_CHANNEL/$RPM_MAJMIN/slemicro/$RPMARCH"
+SLE_S3_PATH="rke2/$RPM_CHANNEL/$RPM_MAJMIN/sle/$RPMARCH"
 TARGET_RPM_PATH="dist/slemicro/$RPMARCH/rke2-*.rpm"
 
 if [[ "$UPLOAD_ARCH" == "srcrpm" ]]; then
   TARGET_S3_PATH="rke2/$RPM_CHANNEL/$RPM_MAJMIN/slemicro/source"
+  SLE_S3_PATH="rke2/$RPM_CHANNEL/$RPM_MAJMIN/sle/source"
   TARGET_RPM_PATH="dist/slemicro/source/rke2-*.src.rpm"
 fi
 
@@ -109,3 +113,5 @@ chmod +x rpm_tooling
 mv ./rpm_tooling /usr/bin
 
 rpm_tooling --bucket $AWS_S3_BUCKET/$TARGET_S3_PATH --sign --sign-pass $PRIVATE_KEY_PASS_PHRASE --aws-access-key $AWS_ACCESS_KEY_ID --aws-secret-key $AWS_SECRET_ACCESS_KEY $TARGET_RPM_PATH
+rpm_tooling --bucket $AWS_S3_BUCKET/$SLE_S3_PATH --sign-pass $PRIVATE_KEY_PASS_PHRASE --aws-access-key $AWS_ACCESS_KEY_ID --aws-secret-key $AWS_SECRET_ACCESS_KEY $TARGET_RPM_PATH
+rpm_tooling --bucket $AWS_S3_BUCKET/$SLE_S3_PATH/prime --sign-pass $PRIVATE_KEY_PASS_PHRASE --aws-access-key $AWS_ACCESS_KEY_ID --aws-secret-key $AWS_SECRET_ACCESS_KEY $TARGET_RPM_PATH
