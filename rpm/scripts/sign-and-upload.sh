@@ -2,7 +2,7 @@
 set -euo pipefail
 SCRIPTS=$(cd "$(dirname "$0")" && pwd)
 . "$SCRIPTS/config.sh"
-. "$SCRIPTS/../repository-routing.sh"
+. "$SCRIPTS/repository-routing.sh"
 rpm_architecture
 
 # The upload container is CentOS for every target OS, not the build image.

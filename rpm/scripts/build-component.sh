@@ -19,7 +19,7 @@ mkdir -p "$RPM_TOPDIR/SPECS" "$SRC_PATH"
 cp -r "$SPEC_PATH/"* "$SRC_PATH/"
 cp "$SPEC_PATH/$SPEC" "$RPM_TOPDIR/SPECS/"
 CHANGELOG_PATH="$SRC_PATH/CHANGELOG.md"
-. "$SOURCE/rpm/gen-changelog.sh" "$CHANGELOG_PATH"
+. "$SCRIPTS/gen-changelog.sh" "$CHANGELOG_PATH"
 sed -i "s/\%global ARCH.*/\%global ARCH ${GOARCH}/" "$SRC_PATH/$SPEC"
 
 cd "$SRC_PATH"
