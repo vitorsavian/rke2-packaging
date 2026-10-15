@@ -9,8 +9,6 @@ case "${RPM_OS:-}" in
     ;;
   microos | slemicro | sle)
     RPM_SPEC_OS=$RPM_OS
-    # SLE shares recipes, not binaries or publication destinations.
-    if [[ "$RPM_OS" == sle ]]; then RPM_SPEC_OS=slemicro; fi
     RPM_REPO_OS=$RPM_OS
     RPM_DIST=.sle
     if [[ "$RPM_OS" == slemicro ]]; then RPM_DIST=.slemicro; fi
