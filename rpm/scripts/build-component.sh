@@ -8,6 +8,11 @@ case "$component" in
   common | server | agent) ;;
   *) echo "Invalid RPM component: $component" >&2; exit 1 ;;
 esac
+case "${RPM_REPOSITORY:-all}" in
+  all) RKE2_ASSET_BASE=https://github.com/rancher/rke2/releases/download ;;
+  prime) RKE2_ASSET_BASE=https://prime.ribs.rancher.io/rke2 ;;
+  *) echo "RPM_REPOSITORY must be all or prime, got: $RPM_REPOSITORY" >&2; exit 1 ;;
+esac
 . "$SCRIPTS/version.sh"
 
 # Overrideable for local/offline testing; production retains the original topdir.
@@ -17,10 +22,11 @@ SPEC_PATH="$SOURCE/rpm/$RPM_SPEC_OS/$component"
 SPEC="rke2-$component.spec"
 mkdir -p "$RPM_TOPDIR/SPECS" "$SRC_PATH"
 cp -r "$SPEC_PATH/"* "$SRC_PATH/"
-cp "$SPEC_PATH/$SPEC" "$RPM_TOPDIR/SPECS/"
 CHANGELOG_PATH="$SRC_PATH/CHANGELOG.md"
 . "$SCRIPTS/gen-changelog.sh" "$CHANGELOG_PATH"
 sed -i "s/\%global ARCH.*/\%global ARCH ${GOARCH}/" "$SRC_PATH/$SPEC"
+sed -i "s|https://github.com/rancher/rke2/releases/download/|$RKE2_ASSET_BASE/|" "$SRC_PATH/$SPEC"
+cp "$SRC_PATH/$SPEC" "$RPM_TOPDIR/SPECS/"
 
 cd "$SRC_PATH"
 dist_args=()

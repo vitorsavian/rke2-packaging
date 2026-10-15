@@ -106,12 +106,14 @@ jobs:
           TAG: ${{ inputs.tag }}
           COMBARCH: ${{ matrix.build }}
           OS: ${{ matrix.os }}
+          RPM_REPOSITORY: ${{ inputs.repository }}
         run: |
           docker buildx build \
             --target result \
             --output=. \
             --build-arg TAG="${TAG}" \
             --build-arg SCRIPT=build \
+            --build-arg RPM_REPOSITORY="${RPM_REPOSITORY}" \
             --build-arg COMBARCH="${COMBARCH}" \
             -f "Dockerfile.${OS}" .
 
