@@ -1,2 +1,2 @@
 #!/bin/bash
-exec bash "$(dirname "$0")/build-component.sh" agent "$@"
+exec bash "$(dirname "$0")/package-component.sh" agent "$@"
