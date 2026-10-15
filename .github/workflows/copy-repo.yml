@@ -17,7 +17,7 @@ on:
           - stable
         default: 'latest'
       os:
-        description: 'operating system (slemicro is copied to sle and sle/prime, the others to <os>/prime)'
+        description: 'operating system (copies only to the same OS Prime repository)'
         required: true
         type: choice
         options:
@@ -27,7 +27,7 @@ on:
           - microos
           - slemicro
           - sle
-        default: 'slemicro'
+        default: 'sle'
       arch:
         description: 'architecture'
         required: true
@@ -114,7 +114,7 @@ jobs:
             -e RPM_CHANNEL="${RPM_CHANNEL}" \
             -e OS="${OS}" \
             -e SKIP_UPLOAD="${SKIP_UPLOAD}" \
-            quay.io/centos/centos:stream9 rpm/copy-repo
+            quay.io/centos/centos:stream9 rpm/copy-repo.sh
 
       - name: Upload repodata artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

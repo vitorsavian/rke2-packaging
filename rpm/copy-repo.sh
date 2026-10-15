@@ -3,7 +3,6 @@ set -e -x
 
 # Copies the rpms of a published repo to its new locations and rebuilds and
 # signs the repodata for them:
-#   slemicro/<arch> -> sle/<arch> and sle/<arch>/prime
 #   <os>/<arch>     -> <os>/<arch>/prime
 
 yum install -y \
@@ -54,7 +53,7 @@ case "$OS" in
     ;;
   "slemicro")
     SOURCE_OS="slemicro"
-    TARGET_OS="sle"
+    TARGET_OS="slemicro"
     ;;
   "sle")
     SOURCE_OS="sle"
