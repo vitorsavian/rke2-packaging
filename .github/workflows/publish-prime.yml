@@ -12,9 +12,17 @@ permissions:
 
 jobs:
   publish:
+    if: ${{ contains(github.ref_name, '.latest.') || contains(github.ref_name, '.stable.') }}
     uses: ./.github/workflows/publish-rpm.yml
     with:
       tag: ${{ github.ref_name }}
       repository: prime
       release-assets: false
     secrets: inherit
+
+  testing:
+    if: ${{ contains(github.ref_name, '.testing.') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Testing publication placeholder
+        run: echo "Testing asset source is not configured; skipping RPM build and publication."
