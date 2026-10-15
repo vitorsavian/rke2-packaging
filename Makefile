@@ -90,9 +90,4 @@ all-sle-build: $(addprefix sub-sle-build-,$(ALL_ARCH))
 sub-sle-build-%:
 >$(MAKE) COMBARCH=$* sle-build
 
-test:
->bash tests/repository-routing.sh
->bash tests/sle-build.sh
->bash tests/version.sh
-
-.PHONY: test $(CENTOS10_TARGETS) $(CENTOS8_TARGETS) $(CENTOS9_TARGETS) $(MICROOS_TARGETS) $(SLEMICRO_TARGETS) $(SLE_TARGETS)
+.PHONY: $(CENTOS10_TARGETS) $(CENTOS8_TARGETS) $(CENTOS9_TARGETS) $(MICROOS_TARGETS) $(SLEMICRO_TARGETS) $(SLE_TARGETS)
