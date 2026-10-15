@@ -1,0 +1,20 @@
+name: Publish Prime
+on:
+  push:
+    tags:
+      - 'v*+rke2r*.latest.[0-9]*'
+      - 'v*+rke2r*.stable.[0-9]*'
+      - 'v*+rke2r*.testing.[0-9]*'
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    uses: ./.github/workflows/publish-rpm.yml
+    with:
+      tag: ${{ github.ref_name }}
+      repository: prime
+      release-assets: false
+    secrets: inherit
