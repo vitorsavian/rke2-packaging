@@ -60,26 +60,39 @@ concurrency:
 jobs:
   rebuild:
     runs-on: ubuntu-latest
+    # test environment: read the secrets from the test environment instead of the rancher vault
+    environment: test
+    env:
+      PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+      PRIVATE_KEY_PASS_PHRASE: ${{ secrets.PRIVATE_KEY_PASS_PHRASE }}
+      TESTING_PRIVATE_KEY: ${{ secrets.TESTING_PRIVATE_KEY }}
+      TESTING_PRIVATE_KEY_PASS_PHRASE: ${{ secrets.TESTING_PRIVATE_KEY_PASS_PHRASE }}
+      AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      TESTING_AWS_S3_BUCKET: ${{ secrets.TESTING_AWS_S3_BUCKET }}
+      TESTING_AWS_ACCESS_KEY_ID: ${{ secrets.TESTING_AWS_ACCESS_KEY_ID }}
+      TESTING_AWS_SECRET_ACCESS_KEY: ${{ secrets.TESTING_AWS_SECRET_ACCESS_KEY }}
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
-      - name: Read secrets
-        uses: rancher-eio/read-vault-secrets@0da85151ad1f19ed7986c41587e45aac1ace74b6 # v3
-        env:
-          GH_TOKEN: ${{ github.token }}
-        with:
-          secrets: |
-            secret/data/github/repo/${{ github.repository }}/private-key/credentials privateKey | PRIVATE_KEY ;
-            secret/data/github/repo/${{ github.repository }}/private-key-pass-phrase/credentials token | PRIVATE_KEY_PASS_PHRASE ;
-            secret/data/github/repo/${{ github.repository }}/testing-private-key/credentials privateKey | TESTING_PRIVATE_KEY ;
-            secret/data/github/repo/${{ github.repository }}/testing-private-key-pass-phrase/credentials token | TESTING_PRIVATE_KEY_PASS_PHRASE ;
-            secret/data/github/repo/${{ github.repository }}/aws-s3-bucket/credentials token | AWS_S3_BUCKET ;
-            secret/data/github/repo/${{ github.repository }}/aws-access-key-id/credentials token | AWS_ACCESS_KEY_ID ;
-            secret/data/github/repo/${{ github.repository }}/aws-secret-access-key/credentials token | AWS_SECRET_ACCESS_KEY ;
-            secret/data/github/repo/${{ github.repository }}/testing-aws-s3-bucket/credentials token | TESTING_AWS_S3_BUCKET ;
-            secret/data/github/repo/${{ github.repository }}/testing-aws-access-key-id/credentials token | TESTING_AWS_ACCESS_KEY_ID ;
-            secret/data/github/repo/${{ github.repository }}/testing-aws-secret-access-key/credentials token | TESTING_AWS_SECRET_ACCESS_KEY ;
+      # - name: Read secrets
+      #   uses: rancher-eio/read-vault-secrets@0da85151ad1f19ed7986c41587e45aac1ace74b6 # v3
+      #   env:
+      #     GH_TOKEN: ${{ github.token }}
+      #   with:
+      #     secrets: |
+      #       secret/data/github/repo/${{ github.repository }}/private-key/credentials privateKey | PRIVATE_KEY ;
+      #       secret/data/github/repo/${{ github.repository }}/private-key-pass-phrase/credentials token | PRIVATE_KEY_PASS_PHRASE ;
+      #       secret/data/github/repo/${{ github.repository }}/testing-private-key/credentials privateKey | TESTING_PRIVATE_KEY ;
+      #       secret/data/github/repo/${{ github.repository }}/testing-private-key-pass-phrase/credentials token | TESTING_PRIVATE_KEY_PASS_PHRASE ;
+      #       secret/data/github/repo/${{ github.repository }}/aws-s3-bucket/credentials token | AWS_S3_BUCKET ;
+      #       secret/data/github/repo/${{ github.repository }}/aws-access-key-id/credentials token | AWS_ACCESS_KEY_ID ;
+      #       secret/data/github/repo/${{ github.repository }}/aws-secret-access-key/credentials token | AWS_SECRET_ACCESS_KEY ;
+      #       secret/data/github/repo/${{ github.repository }}/testing-aws-s3-bucket/credentials token | TESTING_AWS_S3_BUCKET ;
+      #       secret/data/github/repo/${{ github.repository }}/testing-aws-access-key-id/credentials token | TESTING_AWS_ACCESS_KEY_ID ;
+      #       secret/data/github/repo/${{ github.repository }}/testing-aws-secret-access-key/credentials token | TESTING_AWS_SECRET_ACCESS_KEY ;
 
       - name: Rebuild repodata
         env:
